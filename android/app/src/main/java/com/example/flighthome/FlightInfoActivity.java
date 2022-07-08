@@ -28,6 +28,10 @@ public class FlightInfoActivity extends AppCompatActivity {
     private TextView arr_name;
     private TextView dep_ter;
     private TextView arr_ter;
+    private TextView leave_info;
+    private TextView arr_info;
+
+    //recent flights in this route
     private TextView sch_dep;
     private TextView sch_arr;
     private TextView status;
@@ -37,8 +41,7 @@ public class FlightInfoActivity extends AppCompatActivity {
     private TextView act_arr;
     private TextView dep_ter_1;
     private TextView arr_ter_1;
-    private TextView leave_info;
-    private TextView arr_info;
+
     private LinearLayout recent_view;
     private LinearLayout no_recent_view;
 
@@ -80,7 +83,7 @@ public class FlightInfoActivity extends AppCompatActivity {
         getRecent();
 
     }
-
+    //get the specific route information, if not get use old future schedule data
     private void getRoute(){
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://aviation-edge.com/v2/public/")
@@ -111,6 +114,7 @@ public class FlightInfoActivity extends AppCompatActivity {
                         arr_ter.setText(data.get("arrivalTerminal").getAsString());
                     }
                 }catch(Exception e){
+                    //if not get use old future schedule data and set the notification
                     Log.d("Plane", e.toString());
                     leave_time.setText(MainActivity.time_dep);
                     arr_time.setText(MainActivity.time_arr);
@@ -127,7 +131,7 @@ public class FlightInfoActivity extends AppCompatActivity {
             }
         });
     }
-
+    //get current flight information with same flight number
     private void getRecent(){
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://aviation-edge.com/v2/public/")
@@ -198,8 +202,10 @@ public class FlightInfoActivity extends AppCompatActivity {
                             arr_ter_1.setText(terArr);
                         }
                     }
+                    //if can get current flight,hide the layout for no flight
                     no_recent_view.setVisibility(View.GONE);
                }catch(Exception e){
+                    //if unable to find one, hide the layout for current flight information
                     Log.d("Plane", e.toString());
                     recent_view.setVisibility(View.GONE);
                     Toast.makeText(FlightInfoActivity.this,"No Flight This Day, Check the date",Toast.LENGTH_LONG).show();

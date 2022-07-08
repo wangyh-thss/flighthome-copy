@@ -42,7 +42,7 @@ public class HomeActivity extends AppCompatActivity {
         to_place = findViewById(R.id.to_text);
         date_place = findViewById(R.id.date_text);
 
-        //set city database(no need for user)
+        //set city and airport database(no need for user)
         insertCity = findViewById(R.id.button);
         insertCity.setVisibility(View.INVISIBLE);
         insertCity.setOnClickListener(new View.OnClickListener() {
@@ -56,6 +56,7 @@ public class HomeActivity extends AppCompatActivity {
                         if(data!=null){
                             JsonArray b = new JsonArray();
                             int k = 0;
+                            //spilt into smaller packages
                             for(int i = 0;i<data.size();i++){
                                 JsonObject a = data.get(i).getAsJsonObject();
                                 b.add(a);
@@ -88,6 +89,7 @@ public class HomeActivity extends AppCompatActivity {
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                     Date stringDate= format.parse(date_set);
                     MainActivity.date = date_set;
+                    //make sure get all necessary information
                     if(!fromPlace.equals("") && !toPlace.equals("") && !date_set.equals("")){
                         getIata(fromPlace,true);
                         Handler handler = new Handler();
@@ -100,6 +102,7 @@ public class HomeActivity extends AppCompatActivity {
                         handler2.postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                //jump to next page only when get iata data for both cities
                                 if(result == 2) {
                                     Intent settingsIntent = new Intent(HomeActivity.this, DepAirActivity2.class);
                                     startActivity(settingsIntent);
@@ -119,9 +122,10 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    //get iataCode from the name of city
     private void getIata(String city,boolean isFrom){
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8000/")
+                .baseUrl("http://137.184.238.43:8000/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -135,10 +139,12 @@ public class HomeActivity extends AppCompatActivity {
                 if(response.body()!= null) {
                     if(response.body().get("iata")!=null) {
                         if (isFrom) {
+                            //departure city iata
                             MainActivity.fromCity = response.body().get("iata").getAsString();
                             Log.d("Message", MainActivity.fromCity);
                             result ++;
                         } else {
+                            //arrival city iata
                             MainActivity.toCity = response.body().get("iata").getAsString();
                             Log.d("Message", MainActivity.toCity);
                             result ++;
@@ -154,6 +160,7 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    //get all the city (airport) database from api
     private void getCity(){
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://aviation-edge.com/v2/public/")
@@ -178,10 +185,10 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
-
+    //send the database to the server to save in the mongoDB
     private void postCity(JsonArray res){
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8000")
+                .baseUrl("http://137.184.238.43:8000")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

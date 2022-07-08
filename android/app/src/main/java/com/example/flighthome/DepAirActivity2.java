@@ -34,6 +34,8 @@ public class DepAirActivity2 extends AppCompatActivity {
         MainActivity.isArrival=false;
 
         getData();
+
+        //build recyclerView
         airportRecyclerView = findViewById(R.id.airport_view);
         layoutManager = new LinearLayoutManager(this);
         adapter = new AirportAdapter(airportList);
@@ -45,9 +47,10 @@ public class DepAirActivity2 extends AppCompatActivity {
         getairportIata();
     }
 
+    //get the iata code and airport name from the server
     private void getairportIata(){
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8000/")
+                .baseUrl("http://137.184.238.43:8000/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -70,8 +73,10 @@ public class DepAirActivity2 extends AppCompatActivity {
                             adapter.notifyItemInserted(airportList.size() - 1);
                             airportRecyclerView.scrollToPosition(airportList.size() - 1);
                         }
+                        //come back to the beginning
                         airportRecyclerView.scrollToPosition(0);
                     }else{
+                        //if doesn't find airport, come back to search page
                         Intent settingsIntent = new Intent(DepAirActivity2.this, HomeActivity.class);
                         startActivity(settingsIntent);
                     }

@@ -9,11 +9,6 @@ const port = 8000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
-/*const {MongoClient} = require("mongodb")
-uri = "mongodb://localhost:27017"
-const client = new MongoClient(uri)*/
-
 app.use(express.json())
 
 const citySchema = new mongoose.Schema({
@@ -52,14 +47,6 @@ app.post("/city",(req,res)=>{
         console.log(iata)
         const newCity = new City({cityid,iata})
         newCity.save(err => err && console.log(err))
-        /*const oldCity = City.findOne({cityid:cityid})
-        if(!oldCity){
-            if(iata==null){
-                iata = ""
-            }
-            const newCity = new City({cityid,iata})
-            newCity.save(err => err && console.log(err))
-        }*/
     });
     res.status(200).json("sucess")
 })
@@ -74,6 +61,7 @@ app.route("/city/:cityID").get((req,res,next) => {
     })
   })
 
+  //save airports data
   app.post("/airport",(req,res)=>{
     var data = req.body
     data.forEach(element => {
@@ -86,9 +74,9 @@ app.route("/city/:cityID").get((req,res,next) => {
         newAirport.save(err => err && console.log(err))
     });
     res.status(200).json("sucess")
-})
+  })
 
-//get city iata
+//get airport iata
 app.route("/airport/:cityiata").get((req,res,next) => {
     console.log(req.params.cityiata)
     Airport.find({cityiata: req.params.cityiata},(err,airport) => {
